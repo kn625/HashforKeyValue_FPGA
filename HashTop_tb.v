@@ -25,9 +25,10 @@ module HashTop_tb;
 
 
 localparam	FIFOWIDTH 		= 8'd128;
-localparam	KEYHASH_WIDTH1 	= 8'd28;
-localparam	KEYHASH_WIDTH2 	= 8'd24;
-localparam	KEYHASH_WIDTH3 	= 8'd5;
+//localparam	KEYHASH_WIDTH1 	= 8'd28;
+//localparam	KEYHASH_WIDTH2 	= 8'd24;
+//localparam	KEYHASH_WIDTH3 	= 8'd5;
+localparam	KEYHASH_WIDTH 	= 8'd57;
 
 
 reg 						clk;
@@ -41,9 +42,7 @@ wire 						iRdKeyLenFifo_en;
 
 //下游输入
 wire 						iRdHashEmpty;
-wire [KEYHASH_WIDTH1-1:0]	iKeyHashFifo_1;
-wire [KEYHASH_WIDTH2-1:0]	iKeyHashFifo_2;
-wire [KEYHASH_WIDTH3-1:0]	iKeyHashFifo_3;
+wire [KEYHASH_WIDTH-1:0]	iKeyHashFifo;
 
 /********************输出部分*******************/
 //上游输出
@@ -84,9 +83,7 @@ HashTop HashTop(
 	.iRdHashFifo_en(oRdHashFifo_en),
 	
 	//三个Hash值
-	.oKeyHashFifo_1(iKeyHashFifo_1),
-	.oKeyHashFifo_2(iKeyHashFifo_2),
-	.oKeyHashFifo_3(iKeyHashFifo_3)
+	.oKeyHashFifo(iKeyHashFifo)
 	);
 
 
