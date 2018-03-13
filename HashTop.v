@@ -23,7 +23,8 @@ module HashTop
 	#(	parameter	FIFOWIDTH = 8'd128,
 		parameter	KEYHASH_WIDTH1 = 8'd28,
 		parameter	KEYHASH_WIDTH2 = 8'd24,
-		parameter	KEYHASH_WIDTH3 = 8'd5
+		parameter	KEYHASH_WIDTH3 = 8'd5,
+		parameter	KEYHASH_WIDTH = 8'd57
 	)
 	(
 	input wire 								clk,
@@ -52,15 +53,14 @@ module HashTop
 	input wire 								iRdHashFifo_en,
 	
 	//三个Hash值
-	output wire [KEYHASH_WIDTH1-1:0]		oKeyHashFifo_1,
-	output wire [KEYHASH_WIDTH2-1:0]		oKeyHashFifo_2,
-	output wire [KEYHASH_WIDTH3-1:0]		oKeyHashFifo_3
+	output wire [KEYHASH_WIDTH-1:0]			oKeyHashFifo
     );
 
 
 
 
 /*********************与下游FIFO接口信号*********************/
+wire [KEYHASH_WIDTH-1 :0]					KeyHash;
 wire [KEYHASH_WIDTH1-1:0]					KeyHash_1;
 wire [KEYHASH_WIDTH2-1:0]					KeyHash_2;
 wire [KEYHASH_WIDTH3-1:0]					KeyHash_3;
@@ -71,14 +71,7 @@ wire 										WrHashFifo_en;
 
 //与下游FIFO接口的写满信号
 wire 										WrHashFull;
-wire										WrHashFull_1;
-wire 										WrHashFull_2;
-wire 										WrHashFull_3;
 
-//与下游FIFO接口的读空信号
-wire 										RdHashEmpty_1;
-wire 										RdHashEmpty_2;
-wire 										RdHashEmpty_3;
 
 HashFunc	HashFunc(
 	.clk(clk),
@@ -120,57 +113,18 @@ fifo_generator_0 KeyHash_FIFO_1(
 	
 	.rd_clk(iRdHashClk),  		// input wire rd_clk
 	
-	.din(KeyHash_1),        	// input wire [127 : 0] din
+	.din(KeyHash),        	// input wire [127 : 0] din
 	
 	.wr_en(WrHashFifo_en),    		// input wire wr_en
 	
 	.rd_en(iRdHashFifo_en),    		// input wire rd_en
-	.dout(oKeyHashFifo_1),      		// output wire [127 : 0] dout
+	.dout(oKeyHashFifo),      		// output wire [127 : 0] dout
 	
-	.full(WrHashFull_1),      		// output wire full
-	.empty(RdHashEmpty_1)    			// output wire empty
+	.full(WrHashFull),      		// output wire full
+	.empty(oRdHashEmpty)    			// output wire empty
     );
 
 	
-
-fifo_generator_1 KeyHash_FIFO_2(
-	.rst(rst),        		// input wire rst
+assign KeyHash = {KeyHash_1,KeyHash_2,KeyHash_3};
 	
-	.wr_clk(WrHashClk),  		// input wire wr_clk
-	
-	.rd_clk(iRdHashClk),  		// input wire rd_clk
-	
-	.din(KeyHash_2),        	// input wire [127 : 0] din
-	
-	.wr_en(WrHashFifo_en),    		// input wire wr_en
-	
-	.rd_en(iRdHashFifo_en),    		// input wire rd_en
-	.dout(oKeyHashFifo_2),      		// output wire [127 : 0] dout
-	
-	.full(WrHashFull_2),      		// output wire full
-	.empty(RdHashEmpty_2)    			// output wire empty
-    );
-
-fifo_generator_2 KeyHash_FIFO_3(
-	.rst(rst),        		// input wire rst
-	
-	.wr_clk(WrHashClk),  		// input wire wr_clk
-	
-	.rd_clk(iRdHashClk),  		// input wire rd_clk
-	
-	.din(KeyHash_3),        	// input wire [127 : 0] din
-	
-	.wr_en(WrHashFifo_en),    		// input wire wr_en
-	
-	.rd_en(iRdHashFifo_en),    		// input wire rd_en
-	.dout(oKeyHashFifo_3),      		// output wire [127 : 0] dout
-	
-	.full(WrHashFull_3),      		// output wire full
-	.empty(RdHashEmpty_3)    			// output wire empty
-    );
-
-
-assign WrHashFull 	= WrHashFull_1||WrHashFull_2||WrHashFull_3;
-assign oRdHashEmpty = RdHashEmpty_1||RdHashEmpty_2||RdHashEmpty_3;
-
 endmodule
