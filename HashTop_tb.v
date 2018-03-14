@@ -2,21 +2,21 @@
 //////////////////////////////////////////////////////////////////////////////////
 // Company: ICT
 // Engineer: Corning
-// 
+//
 // Create Date: 2017/12/29 10:27:42
-// Design Name: 
+// Design Name:
 // Module Name: HashTop_tb
 // Project Name: HashTable
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
+// Target Devices:
+// Tool Versions:
+// Description:
+//
+// Dependencies:
+//
 // Revision:
 // Revision 0.01 - File Created
 // Additional Comments:
-// 
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 
@@ -59,29 +59,29 @@ reg 						oRdHashClk;
 HashTop HashTop(
     .clk(clk),
 	.rst(rst),
-	
+
 	/************************与上游FIFO交互部分*****************************/
 	.oRdKeyClk(iRdKeyClk),
-	
+
 	//上游FIFO读空信号
 	.iRdKeyEmpty(oRdKeyEmpty),
 	.iRdKeyLenEmpty(oRdKeyLenEmpty),
-	
+
 	//上游FIFO读使能信号，与FIFO中read enable信号对接
 	.oRdKeyFifo_en(iRdKeyFifo_en),
-	.oRdKeyLenFifo_en(iRdKeyLenFifo_en),	
-	
+	.oRdKeyLenFifo_en(iRdKeyLenFifo_en),
+
 	.iKey(oKey),
 	.iKeyLen(oKeyLen),
-	
-	
+
+
 	/*************************与下游FIFO交互部分****************************/
 	.iRdHashClk(oRdHashClk),
-	
+
 	.oRdHashEmpty(iRdHashEmpty),
-	
+
 	.iRdHashFifo_en(oRdHashFifo_en),
-	
+
 	//三个Hash值
 	.oKeyHashFifo(iKeyHashFifo)
 	);
@@ -91,14 +91,19 @@ HashTop HashTop(
 initial begin
     rst = 0;
     clk = 0;
-	oRdHashClk = 0;
-	//oRdHashFifo_en = 1;
+  	//oRdHashFifo_en = 1;
     #5 rst = 1;
     #100 rst = 0;
     forever begin
-        #10 clk <= ~clk;
+		#10 clk <= ~clk;
+    end
+end
+
+initial begin
+  	oRdHashClk = 0;
+    forever begin
 		#13	oRdHashClk <= ~oRdHashClk;
-    end   
+    end
 end
 
 assign oRdHashFifo_en = !iRdHashEmpty;
@@ -131,13 +136,12 @@ always @(posedge rst or posedge clk)begin
 			enable <= 0;
 			oRdKeyEmpty <= 1;
 			oRdKeyLenEmpty <= 1;
-			
+
 		end
 	end
 end
 
-
 assign oKey = memKey[i_key];
 assign oKeyLen = memKeyLen[i_keyLen];
-	
+
 endmodule
